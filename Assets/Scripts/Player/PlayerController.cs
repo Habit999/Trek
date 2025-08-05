@@ -17,15 +17,23 @@ public class PlayerController : MonoBehaviour
     {
         playerDeviceInput.OnMove += playerMovement.Move;
         playerDeviceInput.OnLook += playerCamera.Look;
+
         playerDeviceInput.OnStartJump += playerMovement.StartJump;
         playerDeviceInput.OnStopJump += playerMovement.StopJump;
+
+        playerDeviceInput.OnStartCrouch += playerMovement.StartCrouch;
+        playerDeviceInput.OnStopCrouch += playerMovement.StopCrouch;
     }
 
     private void OnDisable()
     {
         playerDeviceInput.OnMove -= playerMovement.Move;
         playerDeviceInput.OnLook -= playerCamera.Look;
+
         playerDeviceInput.OnStartJump -= playerMovement.StartJump;
         playerDeviceInput.OnStopJump -= playerMovement.StopJump;
+
+        playerDeviceInput.OnStartCrouch -= playerMovement.StartCrouch;
+        playerDeviceInput.OnStopCrouch -= playerMovement.StopCrouch;
     }
 }

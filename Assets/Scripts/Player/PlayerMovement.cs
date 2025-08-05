@@ -8,21 +8,29 @@ public class PlayerMovement : MonoBehaviour
     // Variables
     [SerializeField] private float walkSpeed;
     [SerializeField] private float sprintSpeed;
+    [SerializeField] private float crouchSpeed;
     [Space(10)]
     [SerializeField] private float maxJumpTime;
     [SerializeField] private float jumpForce;
+    [Space(10)]
+    [Range(0, 1)]
+    [SerializeField] private float crouchHight;
     [Space(10)]
     [SerializeField] private float gravityInfluence = 100;
 
     private float jumpCounter;
     private float jumpTimer;
 
+    private float standingHight;
+
     private bool isJumping;
+    private bool isCrouching;
     private bool jumpMaxed;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        standingHight = characterController.height;
     }
 
     private void Update()
@@ -33,11 +41,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Vector2 moveInput, bool isSprinting)
     {
+        float speed;
+        if (isCrouching) speed = crouchSpeed;
+        else speed = isSprinting ? sprintSpeed : walkSpeed;
+
         Vector3 direction = transform.right * moveInput.x + transform.forward * moveInput.y;
-        Vector3 velocity = direction * (isSprinting ? sprintSpeed : walkSpeed) * Time.deltaTime * 10;
+        Vector3 velocity = direction * speed * Time.deltaTime * 10;
         characterController.Move(velocity);
     }
 
+    #region Jumping Functions
     public void StartJump()
     {
         if(characterController.isGrounded && !isJumping)
@@ -76,10 +89,24 @@ public class PlayerMovement : MonoBehaviour
             StopJump();
         }
     }
+    #endregion
+
+    #region Crouch Functions
+    public void StartCrouch()
+    {
+        isCrouching = true;
+        characterController.height = standingHight * crouchHight;
+    }
+
+    public void StopCrouch()
+    {
+        isCrouching = false;
+        characterController.height = standingHight;
+    }
+    #endregion
 
     private void Gravity()
     {
-        if(!characterController.isGrounded && !isJumping)
-            characterController.Move(Physics.gravity * Time.deltaTime * gravityInfluence);
+        characterController.Move(Physics.gravity * Time.deltaTime * gravityInfluence);
     }
 }

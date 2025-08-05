@@ -8,7 +8,10 @@ public class PlayerDeviceInput : MonoBehaviour
 
     public event Action OnStartJump;
     public event Action OnStopJump;
-    public event Action<bool> OnDodge;
+
+    public event Action OnStartCrouch;
+    public event Action OnStopCrouch;
+
     public event Action OnInteract;
 
     [SerializeField] private ControlScheme controlScheme = new ControlScheme();
@@ -37,8 +40,10 @@ public class PlayerDeviceInput : MonoBehaviour
             OnStopJump?.Invoke();
 
         // Crouching
-        OnDodge?.Invoke(Input.GetKey(controlScheme.Dodge));
-
+        if(Input.GetKeyDown(controlScheme.Crouch))
+            OnStartCrouch?.Invoke();
+        if (Input.GetKeyUp(controlScheme.Crouch))
+            OnStopCrouch?.Invoke();
         // Interact
         if (Input.GetKeyDown(controlScheme.Interact))
             OnInteract?.Invoke();
@@ -50,5 +55,5 @@ public class ControlScheme
 {
     public KeyCode Interact = KeyCode.E;
     public KeyCode Jump = KeyCode.Space;
-    public KeyCode Dodge = KeyCode.C;
+    public KeyCode Crouch = KeyCode.C;
 }
