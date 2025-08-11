@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class PlayerDeviceInput : MonoBehaviour
 {
-    public event Action<Vector2, bool> OnMove;
+    public event Action<Vector2> OnMove;
     public event Action<Vector2> OnLook;
+
+    public event Action OnStartSprint;
+    public event Action OnStopSprint;
 
     public event Action OnStartJump;
     public event Action OnStopJump;
@@ -27,7 +30,13 @@ public class PlayerDeviceInput : MonoBehaviour
     {
         // Move
         Vector2 moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if(moveInput.magnitude > 0) OnMove?.Invoke(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")), Input.GetKey(KeyCode.LeftShift));
+        if(moveInput.magnitude > 0) OnMove?.Invoke(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
+
+        // Sprinting
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            OnStartSprint?.Invoke();
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+            OnStopSprint?.Invoke();
 
         // Look
         Vector2 lookInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * mouseSensitivity;

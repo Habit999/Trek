@@ -13,10 +13,13 @@ public class PlayerController : MonoBehaviour
         playerCamera = GetComponent<PlayerCamera>();
     }
 
-    private void OnEnable()
+    public void EnableMoveInput()
     {
         playerDeviceInput.OnMove += playerMovement.Move;
         playerDeviceInput.OnLook += playerCamera.Look;
+
+        playerDeviceInput.OnStartSprint += playerMovement.StartSprint;
+        playerDeviceInput.OnStopSprint += playerMovement.StopSprint;
 
         playerDeviceInput.OnStartJump += playerMovement.StartJump;
         playerDeviceInput.OnStopJump += playerMovement.StopJump;
@@ -25,15 +28,28 @@ public class PlayerController : MonoBehaviour
         playerDeviceInput.OnStopCrouch += playerMovement.StopCrouch;
     }
 
+    public void DisableMoveInput()
+    {
+        playerDeviceInput.OnMove += playerMovement.Move;
+        playerDeviceInput.OnLook += playerCamera.Look;
+
+        playerDeviceInput.OnStartSprint += playerMovement.StartSprint;
+        playerDeviceInput.OnStopSprint += playerMovement.StopSprint;
+
+        playerDeviceInput.OnStartJump += playerMovement.StartJump;
+        playerDeviceInput.OnStopJump += playerMovement.StopJump;
+
+        playerDeviceInput.OnStartCrouch += playerMovement.StartCrouch;
+        playerDeviceInput.OnStopCrouch += playerMovement.StopCrouch;
+    }
+
+    private void OnEnable()
+    {
+        EnableMoveInput();
+    }
+
     private void OnDisable()
     {
-        playerDeviceInput.OnMove -= playerMovement.Move;
-        playerDeviceInput.OnLook -= playerCamera.Look;
-
-        playerDeviceInput.OnStartJump -= playerMovement.StartJump;
-        playerDeviceInput.OnStopJump -= playerMovement.StopJump;
-
-        playerDeviceInput.OnStartCrouch -= playerMovement.StartCrouch;
-        playerDeviceInput.OnStopCrouch -= playerMovement.StopCrouch;
+        DisableMoveInput();
     }
 }
