@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    private Transform playerCam;
+    [SerializeField] private Transform playerCam;
     private Transform playerBody;
 
     private float pitch;
@@ -10,7 +10,6 @@ public class PlayerCamera : MonoBehaviour
 
     private void Awake()
     {
-        playerCam = Camera.main.transform;
         playerBody = transform;
 
         Cursor.lockState = CursorLockMode.Locked;

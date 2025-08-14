@@ -15,15 +15,57 @@ public class CharacterCustomisation : MonoBehaviour
     private GameObject currentTail;
     private GameObject currentHorn;
 
-    [HideInInspector] public List<ModelOption> ModelOptions = new List<ModelOption>();
-    [HideInInspector] public List<ModelPartOption> EarOptions = new List<ModelPartOption>();
-    [HideInInspector] public List<ModelPartOption> EyeOptions = new List<ModelPartOption>();
-    [HideInInspector] public List<ModelPartOption> TailOptions = new List<ModelPartOption>();
-    [HideInInspector] public List<ModelPartOption> HornOptions = new List<ModelPartOption>();
+    [HideInInspector] public int CurrentModelIndex = 0;
+    [HideInInspector] public int CurrentEarIndex = 0;
+    [HideInInspector] public int CurrentEyeIndex = 0;
+    [HideInInspector] public int CurrentTailIndex = 0;
+    [HideInInspector] public int CurrentHornIndex = 0;
 
-    private void Start()
+    [HideInInspector] public List<ModelOption> ModelOptions = new List<ModelOption>();
+    public List<ModelParts> PartOptions = new List<ModelParts>();
+
+    public void LoadModelData()
     {
-        LoadModelData();
+        ModelOptions.Clear();
+        PartOptions.Clear();
+        for (int i = 0; i < PartOptions.Count; i++)
+        {
+            PartOptions[i].EarOptions.Clear();
+            PartOptions[i].EyeOptions.Clear();
+            PartOptions[i].TailOptions.Clear();
+            PartOptions[i].HornOptions.Clear();
+        }
+
+        foreach (var modelAsset in GameManager.Instance.CharacterModelAssets)
+        {
+            if (modelAsset is ModelOption model)
+            {
+                ModelOptions.Add(model);
+                PartOptions.Add(new ModelParts());
+            }
+        }
+
+        foreach (var modelPartAsset in GameManager.Instance.CharacterModelAssets)
+        {
+            if (modelPartAsset is ModelPartOption part)
+            {
+                for (int i = 0; i < ModelOptions.Count; i++)
+                {
+                    if (part.associatedModel == ModelOptions[i])
+                    {
+                        if (part.modelPartType == ModelPartType.Ear)
+                            PartOptions[i].EarOptions.Add(part);
+                        else if (part.modelPartType == ModelPartType.Eye)
+                            PartOptions[i].EyeOptions.Add(part);
+                        else if (part.modelPartType == ModelPartType.Tail)
+                            PartOptions[i].TailOptions.Add(part);
+                        else if (part.modelPartType == ModelPartType.Horn)
+                            PartOptions[i].HornOptions.Add(part);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public void SetModel(GameObject modelPrefab)
@@ -63,42 +105,28 @@ public class CharacterCustomisation : MonoBehaviour
 
     public void SetWholeCharacter(int modelIndex, int earIndex, int eyeIndex, int tailIndex, int hornIndex)
     {
-        SetModel(ModelOptions[modelIndex].modelPrefab);
-        SetEar(EarOptions[earIndex].partPrefab);
-        SetEye(EyeOptions[eyeIndex].partPrefab);
-        SetTail(TailOptions[tailIndex].partPrefab);
-        SetHorn(HornOptions[hornIndex].partPrefab);
+        CurrentModelIndex = modelIndex;
+        CurrentEarIndex = earIndex;
+        CurrentEyeIndex = eyeIndex;
+        CurrentTailIndex = tailIndex;
+        CurrentHornIndex = hornIndex;
+        UpdateModel();
     }
 
-    private void LoadModelData()
+    public void UpdateModel()
     {
-        ModelOptions.Clear();
-        EarOptions.Clear();
-        EyeOptions.Clear();
-        TailOptions.Clear();
-        HornOptions.Clear();
-
-        foreach (var modelAsset in GameManager.Instance.CharacterModelAssets)
-        {
-            if(modelAsset is ModelOption model)
-            {
-                ModelOptions.Add(model);
-            }
-        }
-
-        foreach (var modelPartAsset in GameManager.Instance.CharacterModelAssets)
-        {
-            if (modelPartAsset is ModelPartOption part)
-            {
-                if (part.modelPartType == ModelPartType.Ear)
-                    EarOptions.Add(part);
-                else if (part.modelPartType == ModelPartType.Eye)
-                    EyeOptions.Add(part);
-                else if (part.modelPartType == ModelPartType.Tail)
-                    TailOptions.Add(part);
-                else if (part.modelPartType == ModelPartType.Horn)
-                    HornOptions.Add(part);
-            }
-        }
+        SetModel(ModelOptions[CurrentModelIndex].modelPrefab);
+        SetEar(PartOptions[CurrentModelIndex].EarOptions[CurrentEarIndex].partPrefab);
+        SetEye(PartOptions[CurrentModelIndex].EyeOptions[CurrentEyeIndex].partPrefab);
+        SetTail(PartOptions[CurrentModelIndex].TailOptions[CurrentTailIndex].partPrefab);
+        SetHorn(PartOptions[CurrentModelIndex].HornOptions[CurrentHornIndex].partPrefab);
     }
+}
+
+public class ModelParts
+{
+    [HideInInspector] public List<ModelPartOption> EarOptions = new List<ModelPartOption>();
+    [HideInInspector] public List<ModelPartOption> EyeOptions = new List<ModelPartOption>();
+    [HideInInspector] public List<ModelPartOption> TailOptions = new List<ModelPartOption>();
+    [HideInInspector] public List<ModelPartOption> HornOptions = new List<ModelPartOption>();
 }
