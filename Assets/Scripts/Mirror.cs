@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Mirror : Interactable
+public class Mirror : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject mirrorCamera;
     [SerializeField] private GameObject customisationUI;
@@ -38,7 +38,7 @@ public class Mirror : Interactable
         modelRotation = model.rotation.eulerAngles.y;
     }
 
-    public override void Interact(PlayerController interactor)
+    public void Interact(PlayerController interactor)
     {
         playerController = interactor;
         playerController.DisableMoveInput();

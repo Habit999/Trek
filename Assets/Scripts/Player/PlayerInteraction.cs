@@ -11,6 +11,8 @@ public class PlayerInteraction : MonoBehaviour
     public event Action OnStartObserving;
     public event Action OnStopObserving;
 
+    public event Action<Item> OnItemCollected;
+
     [SerializeField] private float interactionDistance;
 
     private RaycastHit hitInfo;
@@ -26,7 +28,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (observing)
         {
-            if(hitInfo.collider.gameObject.TryGetComponent<Interactable>(out Interactable interactable))
+            if(hitInfo.collider.gameObject.TryGetComponent<IInteractable>(out IInteractable interactable))
             {
                 interactable.Interact(player);
             }

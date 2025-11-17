@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float crouchSpeed;
     [SerializeField] private float slideSpeed;
     [SerializeField] private float slideSlowSpeed;
+    [SerializeField] private float slideCooldown;
     [Space(10)]
     [SerializeField] private float maxJumpTime;
     [SerializeField] private float jumpForce;
@@ -23,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float jumpCounter;
     private float jumpTimer;
+
+    private float slideCooldownTimer;
 
     private float standingHight;
 
@@ -44,9 +47,14 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         Gravity();
-        CheckGravity();
+        CheckGround();
+
         if (isJumping) Jumping();
+
+        if (slideCooldownTimer > 0)
+            slideCooldownTimer -= Time.deltaTime * 10;
     }
+
 
     public void Move(Vector2 moveInput)
     {
@@ -122,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
         isCrouching = true;
         characterController.height = standingHight * crouchHight;
 
-        if (isSprinting && !isSliding) StartSliding();
+        if (isSprinting && !isSliding && slideCooldownTimer <= 0) StartSliding();
     }
 
     public void StopCrouch()
@@ -147,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
     private void StopSliding()
     {
         isSliding = false;
+        slideCooldownTimer = slideCooldown;
     }
 
     private void Sliding()
@@ -159,7 +168,7 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
-    private void CheckGravity()
+    private void CheckGround()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, characterController.height / 2 + 0.1f);
     }
